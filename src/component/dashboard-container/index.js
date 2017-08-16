@@ -1,4 +1,5 @@
 import React from 'react';
+import './_dashboard-container.scss';
 //binds our store to our components from react-redux - this allows us to grab parts of state and pass it to our components through dispatch.
 import { connect } from 'react-redux';
 import {
@@ -21,11 +22,12 @@ import CategoryForm from '../category-form/index.js';
 
 class DashboardContainer extends React.Component {
 
-  componentDidMount () {
-      // this.props.categoryCreate({ title: 'cool beans' }),
-      // this.props.categoryCreate({ title: 'brap' }),
-      // this.props.categoryCreate({ title: 'blap' }),
-  }
+  componentDidMount(){
+      this.props.categoryCreate({ title: 'ready' }),
+      this.props.categoryCreate({ title: 'in progress' }),
+      this.props.categoryCreate({ title: 'review' }),
+      this.props.categoryCreate({ title: 'done' })
+  };
 
   render() {
     console.log('categories', this.props.categories)
