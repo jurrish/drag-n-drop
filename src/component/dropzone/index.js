@@ -1,17 +1,35 @@
 import React from 'react';
+import { classToggler } from '../../lib/util.js'
 
 //props:
 //* onComplete -- will invoke onDrop with the dataTransferItem
 class Dropzone extends React.Component {
   constructor(props){
     super(props);
-    this.handleDragOver = this.handleDragOver.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
+
+    this.state = {
+      dropReady: false,
+    }
+
+    this.handleDragOver = this.handleDragOver.bind( this );
+    this.handleDrop = this.handleDrop.bind( this );
+    this.handleDragEnter = this.handleDragEnter.bind( this );
+    this.handleDragLeave = this.handleDragLeave.bind( this );
+
   }
 
-  handleDragOver(e){
+  handleDragEnter( e ){
+    this.setState({ dropReady: true });
+  }
+
+  handleDragLeave( e ){
+    this.setState({ dropReady: false });
+  }
+
+  handleDragOver( e ){
     e.preventDefault()
   }
+
 
   handleDrop(e){
     e.preventDefault();
@@ -25,11 +43,19 @@ class Dropzone extends React.Component {
   }
 
   render(){
+    //when classToggler returns false, dropReady is a falsy value, and only 1 css rule is applied.
+    let className = classToggler({
+      'dropzone': true,
+      'drop-ready': this.state.dropReady,
+    })
     return(
       <div
-        className='dropzone'
+        className={ className }
         onDragOver={ this.handleDragOver }
-        onDrop={ this.handleDrop } >
+        onDrop={ this.handleDrop }
+        onDragEnter={ this.handleDragEnter }
+        onDragLeave={ this.handleDragLeave }
+        >
         { this.props.children }
       </div>
     )

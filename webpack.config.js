@@ -1,47 +1,42 @@
-'use strict';
+'use strict'
 
-require('dotenv').config({path:`${__dirname}/.env`})
-
-//if NODE_ENV is set to 'production', our const production variable will have a truthy value. else it'll be falsy.
+require('dotenv').config({path: `${__dirname}/.env`})
 const production = process.env.NODE_ENV === 'production'
 
-const { DefinePlugin, EnvironmentPlugin } = require('webpack')
-const HTMLPlugin = require('html-webpack-plugin');
-const CleanPlugin = require('clean-webpack-plugin');
-const UglifyPlugin = require('uglifyjs-webpack-plugin');
-const ExtractPlugin = require('extract-text-webpack-plugin');
+const {DefinePlugin, EnvironmentPlugin} = require('webpack')
 
+const HTMLPlugin = require('html-webpack-plugin')
+const CleanPlugin = require('clean-webpack-plugin')
+const UglifyPlugin = require('uglifyjs-webpack-plugin')
+const ExtractPlugin = require('extract-text-webpack-plugin')
 
 let plugins = [
   new EnvironmentPlugin(['NODE_ENV']),
   new ExtractPlugin('bundle-[hash].css'),
-  new HTMLPlugin({ template: `${__dirname}/src/index.html` }),
+  new HTMLPlugin({template: `${__dirname}/src/index.html`}),
   new DefinePlugin({
     __DEBUG__: JSON.stringify(!production),
   }),
 ]
 
-if(production)
+if (production)
   plugins = plugins.concat([ new CleanPlugin(), new UglifyPlugin() ])
 
-
 module.exports = {
-  devtool: 'eval',
+  plugins,
   entry: `${__dirname}/src/main.js`,
   devServer: { historyApiFallback: true },
+  devtool: production ? undefined : 'cheap-module-eval-source-map',
   output: {
-    //what to name the bundle
-    filename: `bundle-[hash].js`,
-    //where to put the file when it's done
     path: `${__dirname}/build`,
-    //appends all of our src tags with this string. ie - <i src="locallySavedImage/useThis.jpg"> gets an appended local source
+    filename: 'bundle-[hash].js',
     publicPath: process.env.CDN_URL,
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /node_module/,
         loader: 'babel-loader',
       },
       {
